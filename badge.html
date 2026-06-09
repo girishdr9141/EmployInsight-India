@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmployInsight - Internship Badge Generator</title>
+    <!-- Google Fonts: Outfit & Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- html2canvas for browser-side image export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow backgrounds */
+        .glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(0,0,0,0) 70%);
+            top: 10%;
+            left: 10%;
+            z-index: -1;
+            filter: blur(40px);
+            pointer-events: none;
+        }
+
+        .glow-2 {
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, rgba(0,0,0,0) 70%);
+            bottom: 10%;
+            right: 10%;
+            z-index: -1;
+            filter: blur(40px);
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 2.5rem;
+            align-items: center;
+            z-index: 10;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar Control Panel */
+        .control-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #a5b4fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        /* Custom File Input button style */
+        .file-upload-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 0.85rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .btn-download {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), #4f46e5);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-download:active {
+            transform: translateY(1px);
+        }
+
+        /* The Badge Display Area */
+        .badge-preview-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        /* Precise 1200 x 630 Badge card structure to match design */
+        #badge-card {
+            width: 1200px;
+            height: 630px;
+            background-color: #ffffff;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 100px;
+            box-sizing: border-box;
+            box-shadow: var(--card-shadow);
+            border-radius: 20px;
+            overflow: hidden;
+            transform-origin: center center;
+            transition: transform 0.3s ease;
+        }
+
+        /* Scale down the preview container in browser to fit screens */
+        .badge-scale-wrapper {
+            transform: scale(0.68);
+            width: 1200px;
+            height: 630px;
+            margin: -100px 0;
+        }
+
+        @media (max-width: 1200px) {
+            .badge-scale-wrapper {
+                transform: scale(0.5);
+                margin: -150px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .badge-scale-wrapper {
+                transform: scale(0.35);
+                margin: -200px 0;
+            }
+        }
+
+        /* Left Side Text Content */
+        .badge-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            color: #2d3748;
+            padding-right: 40px;
+        }
+
+        .badge-name {
+            font-size: 64px;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 45px;
+            color: #2d3748;
+            word-wrap: break-word;
+        }
+
+        .badge-details {
+            font-size: 36px;
+            font-weight: 500;
+            color: #2d3748;
+            line-height: 1.25;
+        }
+
+        .badge-at {
+            margin: 6px 0;
+            display: block;
+        }
+
+        .badge-company {
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 12px;
+            text-decoration-thickness: 3px;
+        }
+
+        /* Right Side Image content */
+        .badge-avatar-container {
+            width: 380px;
+            height: 380px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .badge-avatar {
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            background-color: #f1f5f9;
+        }
+
+        /* Helper instructions */
+        .tip-text {
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* Keyframe Animations */
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="glow"></div>
+    <div class="glow-2"></div>
+
+    <div class="container">
+        <!-- Control Sidebar -->
+        <div class="control-panel">
+            <h2 class="panel-title">Badge Customizer</h2>
+            
+            <div class="form-group">
+                <label for="input-name">Full Name</label>
+                <input type="text" id="input-name" value="Girish D. R." placeholder="Enter your name">
+            </div>
+
+            <div class="form-group">
+                <label for="input-role">Role</label>
+                <input type="text" id="input-role" value="Data Science Intern" placeholder="Enter your role">
+            </div>
+
+            <div class="form-group">
+                <label for="input-company">Company</label>
+                <input type="text" id="input-company" value="Oasis Infobyte" placeholder="Enter company name">
+            </div>
+
+            <div class="form-group">
+                <label>Profile Image</label>
+                <label for="image-upload" class="file-upload-btn">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                    </svg>
+                    Upload Custom Photo
+                </label>
+                <input type="file" id="image-upload" accept="image/*">
+            </div>
+
+            <button class="btn-download" id="download-btn">Download Badge (PNG)</button>
+        </div>
+
+        <!-- Badge Preview -->
+        <div class="badge-preview-container">
+            <div class="badge-scale-wrapper">
+                <div id="badge-card">
+                    <div class="badge-info">
+                        <div class="badge-name" id="badge-name-text">Girish D. R.</div>
+                        <div class="badge-details">
+                            <span id="badge-role-text">Data Science Intern</span>
+                            <span class="badge-at">at</span>
+                            <span class="badge-company" id="badge-company-text">Oasis Infobyte</span>
+                        </div>
+                    </div>
+                    <div class="badge-avatar-container">
+                        <!-- References the local copied user photo -->
+                        <img src="profile.jpg" alt="Profile" class="badge-avatar" id="badge-avatar-img">
+                    </div>
+                </div>
+            </div>
+            <p class="tip-text">💡 Tip: Make edits in the customizer. The preview updates instantly!</p>
+        </div>
+    </div>
+
+    <script>
+        const inputName = document.getElementById('input-name');
+        const inputRole = document.getElementById('input-role');
+        const inputCompany = document.getElementById('input-company');
+        const imageUpload = document.getElementById('image-upload');
+        const downloadBtn = document.getElementById('download-btn');
+
+        const badgeName = document.getElementById('badge-name-text');
+        const badgeRole = document.getElementById('badge-role-text');
+        const badgeCompany = document.getElementById('badge-company-text');
+        const badgeAvatar = document.getElementById('badge-avatar-img');
+        const badgeCard = document.getElementById('badge-card');
+
+        // Update name
+        inputName.addEventListener('input', (e) => {
+            badgeName.textContent = e.target.value || 'Your Name';
+        });
+
+        // Update role
+        inputRole.addEventListener('input', (e) => {
+            badgeRole.textContent = e.target.value || 'Internship Role';
+        });
+
+        // Update company
+        inputCompany.addEventListener('input', (e) => {
+            badgeCompany.textContent = e.target.value || 'Company';
+        });
+
+        // Handle Image Upload
+        imageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    badgeAvatar.src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Export badge using html2canvas
+        downloadBtn.addEventListener('click', () => {
+            // Temporarily reset transform/scale before capturing
+            const wrapper = document.querySelector('.badge-scale-wrapper');
+            const originalStyle = wrapper.style.cssText;
+            
+            // To render cleanly, we need to ensure high resolution output
+            const options = {
+                useCORS: true,
+                allowTaint: true,
+                scale: 2, // Double resolution for ultra-sharp export
+                backgroundColor: '#ffffff',
+                logging: false
+            };
+
+            html2canvas(badgeCard, options).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `internship_badge_${inputName.value.replace(/\s+/g, '_')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error("Failed to generate image: ", err);
+                alert("Something went wrong generating the badge. Make sure your local image uploaded properly.");
+            });
+        });
+    </script>
+</body>
+</html>
