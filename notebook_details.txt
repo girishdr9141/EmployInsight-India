@@ -1,0 +1,89 @@
+### CELL:
+**🔧 Phase 1: Load & Explore the Data**
+
+### CELL:
+*📌 Cell 1: Import Required Libraries*
+
+
+
+### CELL:
+*📌 Cell 2: Load Datasets*
+
+### CELL:
+*📌 Cell 3: Preview Datasets*
+
+### CELL:
+*📌 Cell 4: Dataset Health Check – Info + Nulls*
+
+### CELL:
+**Phase 2: Data Cleaning (Cells 5–8)**
+
+### CELL:
+*🧹 Cell 5: Rename Columns for Consistency*
+
+### CELL:
+*🧽 Cell 6: Convert Dates to Datetime Format*
+
+### CELL:
+*🧼 Cell 7: Drop Duplicates and Handle Nulls (Basic Cleaning)*
+
+### CELL:
+*🔎 Cell 8: Standardize Industry Dataset (Numeric Formatting)*
+
+### CELL:
+**📊 Phase 3: Exploratory Data Analysis (EDA) & Visualizations**
+
+### CELL:
+*📌 Cell 9: Unemployment Rate Over Time (National Trend)*
+
+### CELL:
+*📌 Cell 10: Region-Wise Unemployment Rate – June 2020*
+
+### CELL:
+*📌 Cell 11: Top 10 Regions with Highest Unemployment Rates*
+
+### CELL:
+*📌 Cell 12: Correlation Heatmap – Unemployment Features*
+
+### CELL:
+****
+
+### CELL:
+*📌 Cell 13: Geo-Plot of June 2020 Unemployment Rates*
+
+### CELL:
+*📌 Cell 14: Top 10 Industries by Investment & Employment*
+
+### CELL:
+*📌 Cell 15: Bar Plots for Top Industries*
+
+### CELL:
+*📌 Cell 16: Jobs Generated per Crore Investment (Efficiency Metric)*
+
+### CELL:
+*📌 Cell 17: Bar Plot – Employment Efficiency*
+
+### CELL:
+📌 *Cell 18: Scatter Plot – Industry Employment vs. Unemployment Rate*
+
+
+### CELL:
+**🔍 Phase 4: In-Depth Analysis & Insights (Cells 18–22)**
+
+### CELL:
+*📌 Cell 18: Regional Employment Strength Analysis*
+
+### CELL:
+*📌 Cell 19: Time-Series Plot – Regional Unemployment Trends*
+
+### CELL:
+*📌 Cell 20: Industry Employment Efficiency Analysis*
+
+### CELL:
+*📌 Cell 21: Regional Opportunity Mapping*
+
+### CELL:
+*📌 Cell 22: Skill Development Recommendations*
+
+### CELL:
+*📌 Cell 23:  
